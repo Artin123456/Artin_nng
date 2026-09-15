@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ARTIN_NNG - گفت‌وگو</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:Tahoma,Arial,sans-serif;background:#050505;color:#fff}
+body{display:flex;flex-direction:column}
+.chatTop{
+  height:68px;display:flex;align-items:center;gap:10px;
+  padding:8px 12px;background:#0d0d0d;border-bottom:1px solid #00ffff33;
+  position:sticky;top:0;z-index:3
+}
+.back{width:48px;height:48px;padding:0;border-radius:14px}
+.avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#101f1f;border:1px solid #00ffff55;font-size:20px}
+.name{font-weight:bold;font-size:16px}
+.sub{font-size:11px;color:#888;margin-top:3px}
+.chat{
+  flex:1;overflow-y:auto;padding:14px 10px 90px;
+  display:flex;flex-direction:column;gap:8px
+}
+.msg{
+  max-width:78%;padding:10px 12px;border-radius:16px;
+  line-height:1.7;font-size:14px;word-wrap:break-word
+}
+.mine{align-self:flex-start;background:#064f52;border-bottom-left-radius:4px}
+.theirs{align-self:flex-end;background:#181818;border:1px solid #00ffff22;border-bottom-right-radius:4px}
+.time{font-size:9px;color:#aaa;margin-top:4px;direction:ltr;text-align:left}
+.empty{margin:auto;color:#777;text-align:center;line-height:1.8}
+.composer{
+  position:fixed;bottom:0;left:0;right:0;
+  display:flex;gap:8px;padding:10px;background:#090909;border-top:1px solid #00ffff33
+}
+.composer input{flex:1;min-width:0;padding:12px;border-radius:16px;border:1px solid #00ffff55;background:#101010;color:#fff;outline:none}
+.composer button{width:52px;padding:0;border-radius:15px;border:1px solid #00ffff66;background:#111;color:#fff;font-size:20px}
+</style>
+</head>
+<body>
+<div class="chatTop">
+  <button class="back" onclick="goMessenger()">↩️</button>
+  <div class="avatar">👤</div>
+  <div>
+    <div id="contactName" class="name">کاربر</div>
+    <div class="sub">گفت‌وگوی خصوصی</div>
+  </div>
+</div>
+
+<div id="chat" class="chat">
+  <div class="empty">در حال بارگذاری گفت‌وگو...</div>
+</div>
+
+<div class="composer">
+  <input id="messageInput" type="text" placeholder="پیام خود را بنویسید..." onkeydown="if(event.key==='Enter') sendPrivateMessage()">
+  <button onclick="sendPrivateMessage()" title="ارسال">➤</button>
+</div>
+
+<script>
+const SUPABASE_URL = "https://cqxueguuqmyryttbppcb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_93n_d6h9xvNtVf73_UT0ZA_gW14NFX0";
+
+let currentUser = null;
+let currentAccessToken = null;
+let contactId = null;
+let contactName = "کاربر";
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function loadSession(){
+  try{
+    currentUser = JSON.parse(sessionStorage.getItem("artin_nng_user") || "null");
+    currentAccessToken = sessionStorage.getItem("artin_nng_token") || null;
+  }catch(e){
+    currentUser = null;
+    currentAccessToken = null;
+  }
+
+  if(!currentUser || !currentAccessToken){
+    alert("برای استفاده از پیام‌رسان ابتدا وارد حساب خود شوید.");
+    window.location.href = "ArtinNNG_9.html";
+    return false;
+  }
+  return true;
+}
+
+function readContact(){
+  const params = new URLSearchParams(window.location.search);
+  contactId = params.get("user");
+  contactName = params.get("name") || "کاربر";
+  document.getElementById("contactName").textContent = contactName;
+
+  if(!contactId || contactId === currentUser.id){
+    alert("کاربر انتخاب‌شده معتبر نیست.");
+    window.location.href = "ArtinNNG_9_messenger.html";
+    return false;
+  }
+  return true;
+}
+
+function goMessenger(){
+  window.location.href = "ArtinNNG_9_messenger.html";
+}
+
+async function loadPrivateMessages(){
+  const chat = document.getElementById("chat");
+
+  const res = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/private_messages?select=id,sender_id,receiver_id,message,created_at" +
+    "&or=(and(sender_id.eq."+encodeURIComponent(currentUser.id)+",receiver_id.eq."+encodeURIComponent(contactId)+"),and(sender_id.eq."+encodeURIComponent(contactId)+",receiver_id.eq."+encodeURIComponent(currentUser.id)+"))" +
+    "&order=created_at.asc",
+    {
+      headers:{
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer " + currentAccessToken
+      }
+    }
+  );
+
+  const data = await res.json();
+
+  if(!res.ok){
+    chat.innerHTML = '<div class="empty">پیام‌های خصوصی هنوز فعال نشده‌اند. SQL نسخه ۶ را در Supabase اجرا کنید.</div>';
+    return;
+  }
+
+  if(!Array.isArray(data) || !data.length){
+    chat.innerHTML = '<div class="empty">هنوز پیامی در این گفت‌وگو نیست.<br>اولین پیام را بفرستید.</div>';
+    return;
+  }
+
+  chat.innerHTML = data.map(m => `
+    <div class="msg ${m.sender_id === currentUser.id ? "mine" : "theirs"}">
+      ${escapeHtml(m.message)}
+      <div class="time">${new Date(m.created_at).toLocaleString("fa")}</div>
+    </div>
+  `).join("");
+
+  chat.scrollTop = chat.scrollHeight;
+  await markMessagesRead();
+}
+
+async function markMessagesRead(){
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/private_messages?sender_id=eq." +
+    encodeURIComponent(contactId) +
+    "&receiver_id=eq." + encodeURIComponent(currentUser.id) +
+    "&read_at=is.null",
+    {
+      method:"PATCH",
+      headers:{
+        "Content-Type":"application/json",
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer " + currentAccessToken,
+        "Prefer":"return=minimal"
+      },
+      body:JSON.stringify({read_at:new Date().toISOString()})
+    }
+  );
+  if(!res.ok) console.log("READ MARK ERROR", await res.text());
+}
+
+async function sendPrivateMessage(){
+  const input = document.getElementById("messageInput");
+  const message = input.value.trim();
+
+  if(!message) return;
+
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/private_messages",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer " + currentAccessToken,
+        "Prefer":"return=minimal"
+      },
+      body:JSON.stringify({
+        sender_id:currentUser.id,
+        receiver_id:contactId,
+        message:message
+      })
+    }
+  );
+
+  if(!res.ok){
+    alert("ارسال پیام انجام نشد. ابتدا SQL نسخه ۶ را در Supabase اجرا کنید.");
+    return;
+  }
+
+  input.value = "";
+  await loadPrivateMessages();
+}
+
+if(loadSession() && readContact()){
+  loadPrivateMessages();
+  setInterval(loadPrivateMessages, 4000);
+}
+</script>
+</body>
+</html>

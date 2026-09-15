@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ARTIN_NNG Gaming</title>
+
+<style>
+
+*{box-sizing:border-box;}
+
+body{
+    margin:0;
+    background:#050505;
+    color:white;
+    font-family:tahoma;
+    text-align:center;
+}
+
+body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle,#00ffff55 2px,transparent 3px);
+    background-size:55px 55px;
+    animation:bg 15s linear infinite;
+    z-index:-1;
+}
+
+@keyframes bg{
+from{background-position:0 0}
+to{background-position:-400px -400px}
+}
+
+.box{
+width:90%;
+max-width:600px;
+margin:25px auto;
+padding:20px;
+background:#111c;
+border-radius:20px;
+box-shadow:0 0 25px #00ffff55;
+}
+
+h1,h2{ color:#00ffff; }
+
+a{
+display:block;
+margin:12px;
+padding:15px;
+background:#00ffff;
+color:black;
+text-decoration:none;
+border-radius:15px;
+font-weight:bold;
+}
+
+.chat{
+height:350px;
+overflow-y:auto;
+background:#111;
+border-radius:15px;
+padding:10px;
+text-align:right;
+}
+
+.msg{
+background:#00ffff;
+color:black;
+padding:10px;
+border-radius:15px;
+margin:8px;
+}
+
+.name{font-size:12px;font-weight:bold;}
+.time{font-size:10px;opacity:.7;}
+
+input,button{
+width:80%;
+padding:12px;
+margin:5px;
+border-radius:20px;
+border:none;
+}
+
+button{
+background:#00ffff;
+font-weight:bold;
+cursor:pointer;
+}
+
+.lock{color:#ff4444;font-weight:bold;}
+
+/* AUTH FORM ALIGNMENT */
+.box input#email,
+.box input#password,
+.box input#phone,
+.box input#oldPassword,
+.box input#newPassword{
+    display:block;
+    width:80%;
+    max-width:480px;
+    margin:8px auto;
+    text-align:right;
+}
+
+.box button{
+    display:block;
+    width:80%;
+    max-width:480px;
+    margin:8px auto;
+}
+
+#toggleAuthBtn{
+    margin-top:12px;
+}
+
+#loginStatus,
+#changeStatus{
+    text-align:center;
+}
+
+
+
+/* MESSENGER */
+.messengerBtn{
+    display:block;
+    width:80%;
+    max-width:480px;
+    margin:10px auto;
+}
+#messengerPage{
+    display:none;
+    margin-top:15px;
+}
+.messengerSearchBox{
+    display:none;
+    background:#0b0b0b;
+    border:1px solid #00ffff55;
+    border-radius:18px;
+    padding:14px;
+    margin-top:12px;
+}
+.messengerSearchBox input{
+    display:block;
+    width:90%;
+    max-width:460px;
+    margin:8px auto;
+}
+.messengerResults,.contactsList{
+    margin-top:12px;
+    text-align:right;
+}
+.userResult,.contactItem{
+    background:#151515;
+    border:1px solid #00ffff44;
+    border-radius:15px;
+    padding:12px;
+    margin:8px 0;
+}
+.userPhone{
+    font-size:12px;
+    opacity:.75;
+    direction:ltr;
+    text-align:left;
+}
+.smallSquareBtn{
+    width:52px !important;
+    height:52px;
+    padding:0 !important;
+    margin:14px auto 0 !important;
+    border-radius:14px !important;
+    font-size:22px;
+}
+.addUserBtn{
+    width:100% !important;
+    max-width:none !important;
+}
+.messengerHint{
+    color:#aaa;
+    font-size:13px;
+}
+
+.messengerBadge{display:inline-flex;min-width:24px;height:24px;padding:0 7px;margin-right:8px;border-radius:12px;background:#ff245e;color:#fff;align-items:center;justify-content:center;font-size:12px;font-weight:bold;vertical-align:middle}
+</style>
+
+</head>
+
+<body>
+
+<h1>ARTIN_NNG</h1>
+<p>🎮 Gaming • Minecraft • Resource Pack</p>
+
+<div class="box">
+
+<h2>🌐 شبکه‌های اجتماعی</h2>
+
+<a href="https://rubika.ir/Artin_nng">روبیکا ARTIN_NNG</a>
+<a href="bale://ble.ir/Artin_nng">بله ARTIN_NNG</a>
+<a href="bale://ble.ir/Minecraft230">ریسورس پک بدوارز در بله</a>
+<a href="https://rubika.ir/minecraft230t">ریسورس پک بدوارز در روبیکا</a>
+
+</div>
+
+<div class="box">
+
+<h2>📅 برنامه روز</h2>
+
+<p id="plan">در حال دریافت...</p>
+
+</div>
+
+<!-- ورود / ثبت نام -->
+
+<div class="box">
+
+<h2>🔐 ورود / ثبت‌نام</h2>
+
+<input id="email" type="email" placeholder="ایمیل">
+
+<input id="password" type="password" placeholder="رمز عبور">
+
+<!-- فقط هنگام ثبت‌نام نمایش داده می‌شود -->
+<input id="phone" type="tel" placeholder="شماره تلفن" style="display:none">
+
+<div style="display:flex;justify-content:center;gap:8px;margin-bottom:10px;">
+<button id="loginTab" onclick="showLogin()" style="width:38%;">🔑 ورود</button>
+<button id="signupTab" onclick="showSignup()" style="width:38%;">📝 ثبت‌نام</button>
+</div>
+
+<button id="signUpBtn" onclick="signUp()" style="display:none;">📝 ثبت‌نام</button>
+
+<button id="signInBtn" onclick="signIn()">🔑 ورود</button>
+
+<p id="loginStatus">🔒 برای چت عمومی وارد شوید</p>
+
+<button id="logoutBtn" onclick="logout()" style="display:none">🚪 خروج</button>
+
+<button onclick="openProfile()">⚙️ تنظیمات حساب</button>
+
+<div id="profilePage" style="display:none">
+
+<h2>👤 پروفایل</h2>
+
+<p id="profileName"></p>
+
+<h3>🔒 تغییر رمز عبور</h3>
+
+<input id="oldPassword" type="password" placeholder="رمز فعلی">
+
+<input id="newPassword" type="password" placeholder="رمز جدید">
+
+<button onclick="changePassword()">تغییر رمز</button>
+
+<p id="changeStatus"></p>
+
+<button onclick="closeProfile()">بستن تنظیمات</button>
+
+</div>
+
+</div>
+
+<!-- پیام‌رسان -->
+<div class="box">
+<h2>📨 پیام‌رسان</h2>
+<p class="messengerHint">پیام‌رسان در یک صفحه جداگانه باز می‌شود.</p>
+<button class="messengerBtn" onclick="openMessenger()">📨 ورود به پیام‌رسان <span id="messengerBadge" class="messengerBadge" style="display:none">0</span></button>
+</div>
+
+<!-- چت عمومی -->
+
+<div class="box">
+
+<h2>💬 چت عمومی ARTIN_NNG</h2>
+
+<div id="chat" class="chat">🔒 ابتدا وارد شوید</div>
+
+<input id="message" placeholder="پیام شما" disabled>
+
+<button id="sendBtn" onclick="sendMessage()" disabled>ارسال</button>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "https://cqxueguuqmyryttbppcb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_93n_d6h9xvNtVf73_UT0ZA_gW14NFX0";
+
+let currentUser = null;
+let currentAccessToken = null;
+let authMode = "login";
+
+function normalizePhone(phone){
+    let p = phone.replace(/[^\d+]/g, "");
+
+    if(p.startsWith("09")){
+        p = "+98" + p.slice(1);
+    }else if(p.startsWith("98")){
+        p = "+" + p;
+    }else if(p.startsWith("9")){
+        p = "+98" + p;
+    }
+
+    return p;
+}
+
+function showLogin(){
+
+    authMode = "login";
+
+    document.getElementById("phone").style.display = "none";
+    document.getElementById("signUpBtn").style.display = "none";
+    document.getElementById("signInBtn").style.display = "block";
+
+}
+
+function showSignup(){
+
+    authMode = "signup";
+
+    document.getElementById("phone").style.display = "block";
+    document.getElementById("signUpBtn").style.display = "block";
+    document.getElementById("signInBtn").style.display = "none";
+
+}
+
+async function loadPlan(){
+
+    let res = await fetch(
+        SUPABASE_URL + "/rest/v1/daily_plan?select=content",
+        {
+            headers:{
+                "apikey":SUPABASE_KEY
+            }
+        }
+    );
+
+    let data = await res.json();
+
+    if(data[0]){
+        document.getElementById("plan").innerText = data[0].content;
+    }else{
+        document.getElementById("plan").innerText="برنامه‌ای وجود ندارد";
+    }
+}
+
+loadPlan();
+
+async function signUp(){
+
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+    let phoneInput = document.getElementById("phone").value.trim();
+
+    if(!email || !password || !phoneInput){
+        alert("ایمیل، رمز عبور و شماره تلفن را وارد کنید.");
+        return;
+    }
+
+    let phone = normalizePhone(phoneInput);
+
+    if(!/^\+989\d{9}$/.test(phone)){
+        alert("شماره تلفن معتبر وارد کنید.");
+        return;
+    }
+
+    let res = await fetch(
+        SUPABASE_URL + "/auth/v1/signup",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "apikey":SUPABASE_KEY
+            },
+            body:JSON.stringify({
+                email:email,
+                password:password
+            })
+        }
+    );
+
+    let data = await res.json();
+
+    if(!data.user){
+        alert("ثبت نام نشد:\n"+JSON.stringify(data));
+        return;
+    }
+
+    let sessionRes = await fetch(
+        SUPABASE_URL + "/auth/v1/token?grant_type=password",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "apikey":SUPABASE_KEY
+            },
+            body:JSON.stringify({
+                email:email,
+                password:password
+            })
+        }
+    );
+
+    let session = await sessionRes.json();
+
+    if(!session.access_token){
+        alert("Session ساخته نشد");
+        return;
+    }
+
+    currentAccessToken = session.access_token;
+
+    let profileRes = await fetch(
+        SUPABASE_URL + "/rest/v1/profile",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "apikey":SUPABASE_KEY,
+                "Authorization":"Bearer "+currentAccessToken,
+                "Prefer":"return=representation"
+            },
+            body:JSON.stringify({
+                id:data.user.id,
+                email:email,
+                username:email.split("@")[0],
+                phone:phone,
+                banned:false,
+                is_admin:false
+            })
+        }
+    );
+
+    if(!profileRes.ok){
+        let profileError = await profileRes.text();
+        alert("ساخت پروفایل انجام نشد:\n"+profileError);
+        return;
+    }
+
+    await signIn();
+
+}
+
+async function signIn(){
+
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+
+    let res = await fetch(
+        SUPABASE_URL + "/auth/v1/token?grant_type=password",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "apikey":SUPABASE_KEY
+            },
+            body:JSON.stringify({
+                email:email,
+                password:password
+            })
+        }
+    );
+
+    let data = await res.json();
+
+    if(data.access_token){
+
+        currentAccessToken = data.access_token;
+
+        let userRes = await fetch(
+            SUPABASE_URL + "/auth/v1/user",
+            {
+                headers:{
+                    "apikey":SUPABASE_KEY,
+                    "Authorization":"Bearer " + currentAccessToken
+                }
+            }
+        );
+
+        let user = await userRes.json();
+
+        let banRes = await fetch(
+            SUPABASE_URL +
+            "/rest/v1/profile?email=eq." +
+            encodeURIComponent(user.email) +
+            "&select=banned",
+            {
+                headers:{
+                    "apikey":SUPABASE_KEY,
+                    "Authorization":"Bearer " + currentAccessToken
+                }
+            }
+        );
+
+        let banData = await banRes.json();
+
+        if(banData.length > 0 && banData[0].banned){
+            alert("⛔ این حساب توسط ادمین بن شده است");
+            currentAccessToken = null;
+            return;
+        }
+
+        currentUser = user;
+
+        document.getElementById("message").disabled=false;
+        document.getElementById("sendBtn").disabled=false;
+
+        document.getElementById("messengerBadge") && (document.getElementById("messengerBadge").style.display="none");
+
+    document.getElementById("loginStatus").innerHTML =
+            "✅ وارد شده: " + currentUser.email.split("@")[0];
+
+        document.getElementById("logoutBtn").style.display="block";
+
+        document.getElementById("chat").innerHTML="";
+
+        loadMessages();
+
+    }else{
+
+        alert("ایمیل یا رمز اشتباه است");
+
+    }
+
+}
+
+function logout(){
+    sessionStorage.removeItem("artin_nng_user");
+sessionStorage.removeItem("artin_nng_token");
+
+    currentUser = null;
+    currentAccessToken = null;
+
+    document.getElementById("message").disabled=true;
+    document.getElementById("sendBtn").disabled=true;
+    document.getElementById("logoutBtn").style.display="none";
+    document.getElementById("messengerPage").style.display="none";
+    document.getElementById("messengerSearchBox").style.display="none";
+    document.getElementById("userResults").innerHTML="";
+    document.getElementById("contactsList").innerHTML="";
+
+    document.getElementById("loginStatus").innerHTML =
+        "🔒 برای چت عمومی وارد شوید";
+
+    document.getElementById("chat").innerHTML =
+        "🔒 ابتدا وارد شوید";
+}
+
+async function loadMessages(){
+
+    if(!currentUser){
+        document.getElementById("chat").innerHTML =
+            "🔒 ابتدا وارد شوید";
+        return;
+    }
+
+    let res = await fetch(
+        SUPABASE_URL + "/rest/v1/messages?select=*&order=id.asc",
+        {
+            headers:{
+                "apikey":SUPABASE_KEY,
+                "Authorization":"Bearer " + currentAccessToken
+            }
+        }
+    );
+
+    let data = await res.json();
+
+    if(!Array.isArray(data)){
+        console.log("خطای دریافت پیام:", data);
+        return;
+    }
+
+    let chat = document.getElementById("chat");
+
+    chat.innerHTML="";
+
+    data.forEach(m=>{
+
+        chat.innerHTML += `
+        <div class="msg">
+
+        <div class="name"
+        style="${m.is_admin ? "color:#ff0000;font-weight:bold;" : ""}">
+
+        ${m.is_admin ? "🛡️👑 " : ""}
+        ${m.username}
+        ${m.is_admin ? " 🔥 ADMIN" : ""}
+
+        </div>
+
+        ${m.message}
+
+        <div class="time">
+        ${new Date(m.created_at).toLocaleString("fa")}
+        </div>
+
+        </div>
+        `;
+
+    });
+
+    chat.scrollTop = chat.scrollHeight;
+
+}
+
+async function sendMessage(){
+
+    if(!currentUser){
+        alert("اول وارد شوید");
+        return;
+    }
+
+    let username = currentUser.email.split("@")[0];
+    let message = document.getElementById("message").value;
+
+    if(!message){
+        alert("پیام را وارد کن");
+        return;
+    }
+
+    await fetch(
+        SUPABASE_URL + "/rest/v1/messages",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "apikey":SUPABASE_KEY,
+                "Authorization":"Bearer " + currentAccessToken
+            },
+            body:JSON.stringify({
+                username:username,
+                message:message
+            })
+        }
+    );
+
+    document.getElementById("message").value="";
+
+    loadMessages();
+
+}
+
+async function loadUnreadPrivateCount(){
+    if(!currentUser || !currentAccessToken) return;
+    const badge=document.getElementById("messengerBadge");
+    if(!badge) return;
+    try{
+        const res=await fetch(
+            SUPABASE_URL+"/rest/v1/private_messages?receiver_id=eq."+encodeURIComponent(currentUser.id)+"&read_at=is.null&select=id",
+            {headers:{"apikey":SUPABASE_KEY,"Authorization":"Bearer "+currentAccessToken}}
+        );
+        if(!res.ok) return;
+        const data=await res.json();
+        const count=Array.isArray(data)?data.length:0;
+        badge.textContent=count>99?"99+":String(count);
+        badge.style.display=count>0?"inline-flex":"none";
+    }catch(e){}
+}
+
+function openMessenger(){
+    if(!currentUser || !currentAccessToken){
+        alert("برای ورود به پیام‌رسان ابتدا وارد حساب خود شوید.");
+        return;
+    }
+
+    sessionStorage.setItem("artin_nng_user", JSON.stringify(currentUser));
+    sessionStorage.setItem("artin_nng_token", currentAccessToken);
+    window.location.href = "ArtinNNG_9_messenger.html";
+}
+
+
+
+function escapeHtml(value){
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/\"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function normalizeSearchPhone(phone){
+    let p=phone.replace(/[^\d+]/g,"");
+    if(p.startsWith("09")) p="+98"+p.slice(1);
+    else if(p.startsWith("98")) p="+"+p;
+    else if(p.startsWith("9")) p="+98"+p;
+    return p;
+}
+
+
+
+
+
+
+
+function openProfile(){
+
+    if(!currentUser){
+        alert("ابتدا وارد شوید");
+        return;
+    }
+
+    document.getElementById("profilePage").style.display="block";
+
+    document.getElementById("profileName").innerHTML =
+        "نام کاربری: " + currentUser.email.split("@")[0];
+
+}
+
+function closeProfile(){
+    document.getElementById("profilePage").style.display="none";
+}
+
+async function changePassword(){
+
+    if(!currentUser){
+        return;
+    }
+
+    let oldPass = document.getElementById("oldPassword").value;
+    let newPass = document.getElementById("newPassword").value;
+    let email=currentUser.email;
+
+    let login = await fetch(
+        SUPABASE_URL+"/auth/v1/token?grant_type=password",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "apikey":SUPABASE_KEY
+            },
+            body:JSON.stringify({
+                email:email,
+                password:oldPass
+            })
+        }
+    );
+
+    let loginData=await login.json();
+
+    if(!loginData.access_token){
+
+        document.getElementById("changeStatus").innerHTML=
+            "❌ رمز فعلی اشتباه است";
+
+        return;
+    }
+
+    let update=await fetch(
+        SUPABASE_URL+"/auth/v1/user",
+        {
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json",
+                "apikey":SUPABASE_KEY,
+                "Authorization":"Bearer "+loginData.access_token
+            },
+            body:JSON.stringify({
+                password:newPass
+            })
+        }
+    );
+
+    if(update.ok){
+
+        document.getElementById("changeStatus").innerHTML=
+            "✅ رمز با موفقیت تغییر کرد";
+
+    }else{
+
+        document.getElementById("changeStatus").innerHTML=
+            "❌ خطا در تغییر رمز";
+
+    }
+
+}
+
+async function checkBanStatus(){
+
+    if(!currentUser || !currentAccessToken) return;
+
+    let res = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/profile?email=eq."+
+        encodeURIComponent(currentUser.email)+
+        "&select=banned",
+        {
+            headers:{
+                "apikey":SUPABASE_KEY,
+                "Authorization":"Bearer "+currentAccessToken
+            }
+        }
+    );
+
+    let data = await res.json();
+
+    if(data[0]?.banned === true){
+
+        alert("⛔ حساب شما بن شده است");
+
+        currentUser=null;
+        currentAccessToken=null;
+
+        document.getElementById("message").disabled=true;
+        document.getElementById("sendBtn").disabled=true;
+        document.getElementById("logoutBtn").style.display="none";
+
+        document.getElementById("loginStatus").innerHTML=
+            "⛔ حساب بن شده";
+
+    }
+
+}
+
+async function start(){
+    await loadMessages();
+}
+
+start();
+
+setInterval(loadMessages,3000);
+setInterval(loadUnreadPrivateCount,4000);
+loadUnreadPrivateCount();
+setInterval(checkBanStatus,5000);
+
+</script>
+
+</body>
+</html>
