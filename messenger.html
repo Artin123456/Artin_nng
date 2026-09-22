@@ -23,7 +23,7 @@ input:focus{border-color:#00ffff}
 .back{width:48px;height:48px;padding:0;font-size:21px}
 .searchRow{display:flex;gap:8px;margin-top:12px}
 .searchRow input{flex:1}
-.searchRow button{width:58px;padding:0}
+.searchRow button{width:58px;padding:0}.contactPickerBtn{width:58px;padding:0;font-size:22px}
 .result,.contact{
   background:#151515;border:1px solid #00ffff33;border-radius:16px;
   padding:13px;margin-top:9px;cursor:pointer
@@ -58,6 +58,7 @@ input:focus{border-color:#00ffff}
       <div class="searchRow">
         <input id="userSearchPhone" type="tel" placeholder="شماره تلفن را وارد کنید">
         <button onclick="searchUsers()" title="جستجو">🔎</button>
+        <button class="contactPickerBtn" onclick="pickPhoneFromContacts()" title="انتخاب از مخاطبین گوشی">👤</button>
       </div>
       <div id="userResults"></div>
     </div>
@@ -121,6 +122,42 @@ function normalizeSearchPhone(phone){
   else if(p.startsWith("98")) p = "+" + p;
   else if(p.startsWith("9")) p = "+98" + p;
   return p;
+}
+
+async function pickPhoneFromContacts(){
+  const resultsBox = document.getElementById("userResults");
+
+  if(!window.isSecureContext || !("contacts" in navigator)){
+    resultsBox.innerHTML = '<div class="empty">انتخاب مخاطبین گوشی در این مرورگر پشتیبانی نمی‌شود. جستجوی شماره را استفاده کنید.</div>';
+    return;
+  }
+
+  try{
+    const supported = await navigator.contacts.getProperties();
+    if(!supported.includes("tel")){
+      resultsBox.innerHTML = '<div class="empty">دسترسی به شماره مخاطبین در این مرورگر پشتیبانی نمی‌شود.</div>';
+      return;
+    }
+
+    const props = ["name","tel"].filter(x => supported.includes(x));
+    const contacts = await navigator.contacts.select(props, {multiple:false});
+
+    if(!contacts || !contacts.length){
+      return;
+    }
+
+    const phone = Array.isArray(contacts[0].tel) ? contacts[0].tel.find(Boolean) : contacts[0].tel;
+    if(!phone){
+      resultsBox.innerHTML = '<div class="empty">این مخاطب شماره تلفن ندارد.</div>';
+      return;
+    }
+
+    document.getElementById("userSearchPhone").value = phone;
+    await searchUsers();
+  }catch(e){
+    if(e && e.name === "AbortError") return;
+    resultsBox.innerHTML = '<div class="empty">انتخاب مخاطب انجام نشد. می‌توانید شماره را دستی جستجو کنید.</div>';
+  }
 }
 
 async function searchUsers(){
