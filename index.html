@@ -9,191 +9,134 @@
 <title>ARTIN_NNG Gaming</title>
 
 <style>
-
-*{box-sizing:border-box;}
-
+:root{
+  --bg:#070914;--panel:rgba(17,22,42,.82);--panel-border:rgba(127,151,255,.20);
+  --text:#f5f7ff;--muted:#aab3d1;--cyan:#5ee7f7;--purple:#9a7bff;--pink:#ff5cb8;
+  --shadow:0 18px 50px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{
-    margin:0;
-    background:#050505;
-    color:white;
-    font-family:tahoma;
-    text-align:center;
+  margin:0;min-height:100vh;color:var(--text);font-family:Tahoma,Arial,sans-serif;text-align:center;
+  background:radial-gradient(ellipse at 12% 0%,rgba(94,231,247,.13),transparent 38%),
+             radial-gradient(ellipse at 90% 18%,rgba(154,123,255,.16),transparent 36%),var(--bg);
+  overflow-x:hidden;
 }
-
+/* پس‌زمینه نئونی سبک: نورها ثابت‌اند و فقط یک لایه نقطه‌ای با transform حرکت می‌کند. */
+body{position:relative;isolation:isolate}
+body:before,body:after{content:"";position:fixed;pointer-events:none;z-index:0;backface-visibility:hidden}
 body:before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background:radial-gradient(circle,#00ffff55 2px,transparent 3px);
-    background-size:55px 55px;
-    animation:bg 15s linear infinite;
-    z-index:-1;
+  inset:0;
+  opacity:.65;
+  background:
+    radial-gradient(ellipse at 15% 22%,rgba(94,231,247,.16),transparent 32%),
+    radial-gradient(ellipse at 82% 28%,rgba(154,123,255,.17),transparent 34%),
+    radial-gradient(ellipse at 50% 100%,rgba(255,92,184,.07),transparent 38%),
+    linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px);
+  background-size:auto,auto,auto,42px 42px,42px 42px;
+  background-position:center,center,center,0 0,0 0;
 }
-
-@keyframes bg{
-from{background-position:0 0}
-to{background-position:-400px -400px}
+body:after{
+  inset:-220px;
+  opacity:.30;
+  background-image:
+    radial-gradient(circle at 20% 30%,rgba(94,231,247,.72) 0 1.1px,transparent 2px),
+    radial-gradient(circle at 70% 72%,rgba(190,166,255,.62) 0 1.1px,transparent 2px),
+    radial-gradient(circle at 48% 85%,rgba(255,92,184,.42) 0 1px,transparent 1.8px);
+  background-size:220px 220px;
+  transform:translate3d(0,0,0);
+  animation:particlesFloat 15s linear infinite;
+  will-change:transform;
 }
-
-.box{
-width:90%;
-max-width:600px;
-margin:25px auto;
-padding:20px;
-background:#111c;
-border-radius:20px;
-box-shadow:0 0 25px #00ffff55;
+body > *{position:relative;z-index:1}
+@keyframes particlesFloat{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-220px,-220px,0)}
 }
-
-h1,h2{ color:#00ffff; }
-
-a{
-display:block;
-margin:12px;
-padding:15px;
-background:#00ffff;
-color:black;
-text-decoration:none;
-border-radius:15px;
-font-weight:bold;
+.site-header{position:relative;padding:48px 18px 34px;max-width:1100px;margin:auto}
+.brand-mark{width:66px;height:66px;margin:0 auto 16px;border-radius:22px;display:grid;place-items:center;
+  font-size:30px;background:linear-gradient(135deg,rgba(94,231,247,.22),rgba(154,123,255,.24));
+  border:1px solid rgba(94,231,247,.45);box-shadow:0 0 35px rgba(94,231,247,.14)}
+.site-header h1{font-size:clamp(30px,7vw,54px);letter-spacing:1px;margin:0;font-weight:900;color:#fff;
+  text-shadow:0 0 26px rgba(94,231,247,.25)}
+.site-header h1 span{background:linear-gradient(90deg,var(--cyan),#fff 50%,#c5a9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.site-subtitle{margin:12px auto 0;color:var(--muted);font-size:14px;line-height:1.9}
+.status-pill{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:8px 13px;border:1px solid var(--panel-border);border-radius:999px;background:rgba(255,255,255,.04);font-size:12px;color:#dce3ff}
+.status-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:#60f2a5;box-shadow:0 0 10px #60f2a5}
+.site-content{width:min(1100px,calc(100% - 28px));margin:0 auto 42px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:stretch}
+.box{min-width:0;margin:0;padding:24px;background:var(--panel);border:1px solid var(--panel-border);border-radius:24px;
+  box-shadow:0 6px 18px rgba(0,0,0,.18);text-align:center;transition:transform .18s ease,border-color .18s ease;}
+@media(hover:hover) and (pointer:fine){.box:hover{transform:translateY(-2px);border-color:rgba(94,231,247,.38)}}
+.box h2{margin:0 0 17px;font-size:20px;color:#f7f8ff;display:flex;align-items:center;justify-content:center;gap:9px}
+.box h2:after{content:"";display:block;width:22px;height:3px;border-radius:9px;background:linear-gradient(90deg,var(--cyan),var(--purple));}
+h3{color:#d9ddff}
+.box p{line-height:1.9}
+.box a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;margin:10px 0;padding:13px 16px;
+  color:#f8f9ff;text-decoration:none;font-weight:bold;line-height:1.7;border-radius:15px;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);transition:background-color .18s ease,border-color .18s ease,color .18s ease;overflow-wrap:anywhere}
+.box a:hover{background:rgba(94,231,247,.10);border-color:rgba(94,231,247,.48);color:#fff}
+.box a[href$="Neon_Escape.apk"]{background:linear-gradient(100deg,rgba(94,231,247,.18),rgba(154,123,255,.2));border-color:rgba(94,231,247,.42);}
+input,button{font:inherit;border-radius:14px;max-width:100%;}
+.box input{display:block;width:100%;max-width:480px;margin:10px auto;padding:14px 15px;color:var(--text);background:rgba(5,8,20,.72);border:1px solid rgba(166,180,255,.2);outline:none;text-align:right;transition:border-color .2s,box-shadow .2s}
+.box input::placeholder{color:#8791b0}
+.box input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(94,231,247,.10)}
+.box button{display:block;width:100%;max-width:480px;margin:10px auto;padding:13px 16px;color:#07101b;font-weight:bold;cursor:pointer;
+  background:linear-gradient(100deg,var(--cyan),#a8f3ff);border:1px solid transparent;box-shadow:0 7px 22px rgba(94,231,247,.10);transition:transform .18s,filter .18s,opacity .18s}
+.box button:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.box button:active{transform:scale(.985)}
+.box button:disabled{opacity:.42;cursor:not-allowed;transform:none;box-shadow:none}
+/* فرم ورود/ثبت‌نام جمع‌وجورتر، بدون تغییر رفتار دکمه‌ها */
+.auth-box{max-width:520px;justify-self:center;width:100%;}
+.auth-box input{width:88%;max-width:360px;padding:10px 12px;margin:7px auto;font-size:14px;border-radius:12px;}
+.auth-box button{width:88%;max-width:360px;padding:10px 12px;margin:7px auto;font-size:14px;border-radius:12px;box-shadow:0 4px 12px rgba(94,231,247,.07);}
+.auth-box #loginTab,.auth-box #signupTab{width:42%!important;max-width:170px;padding:9px 7px!important;margin:0!important;font-size:13px;}
+.auth-box #loginStatus,.auth-box #changeStatus{font-size:12px;}
+.auth-box #profilePage input,.auth-box #profilePage button{width:88%;max-width:360px;}
+#loginTab,#signupTab{width:50%!important;margin:0!important;padding:11px 8px!important}
+#loginStatus,#changeStatus{font-size:13px;color:#b7c2e6;text-align:center}
+#logoutBtn{background:linear-gradient(100deg,#ff719c,#ffb3a4)}
+#profilePage{margin-top:18px;padding-top:18px;border-top:1px solid var(--panel-border)}
+.chat{height:350px;overflow-y:auto;background:rgba(4,7,17,.7);border:1px solid rgba(166,180,255,.12);border-radius:17px;padding:12px;text-align:right;scrollbar-width:thin;scrollbar-color:#59658c transparent}
+.msg{background:linear-gradient(135deg,rgba(94,231,247,.13),rgba(154,123,255,.12));color:var(--text);border:1px solid rgba(94,231,247,.14);padding:12px 14px;border-radius:15px;margin:9px 0;overflow-wrap:anywhere;text-align:right;line-height:1.8}
+.name{font-size:12px;font-weight:bold;color:var(--cyan);margin-bottom:5px}.time{font-size:10px;color:var(--muted);margin-top:6px}
+.lock{color:#ff6e91;font-weight:bold}
+.messengerBtn{display:block;width:100%;max-width:480px;margin:10px auto}
+#messengerPage{display:none;margin-top:15px}
+.messengerSearchBox{display:none;background:rgba(5,8,20,.7);border:1px solid var(--panel-border);border-radius:18px;padding:14px;margin-top:12px}
+.messengerSearchBox input{display:block;width:90%;max-width:460px;margin:8px auto}
+.messengerResults,.contactsList{margin-top:12px;text-align:right}
+.userResult,.contactItem{background:rgba(255,255,255,.04);border:1px solid var(--panel-border);border-radius:15px;padding:12px;margin:8px 0}
+.userPhone{font-size:12px;opacity:.75;direction:ltr;text-align:left}
+.smallSquareBtn{width:52px!important;height:52px;padding:0!important;margin:14px auto 0!important;border-radius:14px!important;font-size:22px}
+.addUserBtn{width:100%!important;max-width:none!important}
+.messengerHint{color:var(--muted);font-size:13px}
+.messengerBadge{display:inline-flex;min-width:24px;height:24px;padding:0 7px;margin-right:8px;border-radius:12px;background:var(--pink);color:#fff;align-items:center;justify-content:center;font-size:12px;font-weight:bold;vertical-align:middle}
+.box:has(#chat),.box:has(#profilePage){grid-column:1/-1}
+#plan{padding:13px 15px;margin:0;background:rgba(255,255,255,.035);border:1px dashed rgba(154,123,255,.35);border-radius:16px;color:#e4e8ff;overflow-wrap:anywhere}
+.site-footer{padding:0 18px 28px;color:#7f89aa;font-size:12px}
+@media(max-width:650px){
+  .site-header{padding:34px 16px 26px}.brand-mark{width:58px;height:58px;border-radius:19px;font-size:26px}
+  .site-content{width:calc(100% - 22px);grid-template-columns:1fr;gap:13px;margin-bottom:28px}
+  .box{padding:20px 16px;border-radius:21px}.box h2{font-size:18px}
+  .box:has(#chat),.box:has(#profilePage){grid-column:auto}
+  .chat{height:300px}.site-subtitle{font-size:13px}
 }
-
-.chat{
-height:350px;
-overflow-y:auto;
-background:#111;
-border-radius:15px;
-padding:10px;
-text-align:right;
-}
-
-.msg{
-background:#00ffff;
-color:black;
-padding:10px;
-border-radius:15px;
-margin:8px;
-}
-
-.name{font-size:12px;font-weight:bold;}
-.time{font-size:10px;opacity:.7;}
-
-input,button{
-width:80%;
-padding:12px;
-margin:5px;
-border-radius:20px;
-border:none;
-}
-
-button{
-background:#00ffff;
-font-weight:bold;
-cursor:pointer;
-}
-
-.lock{color:#ff4444;font-weight:bold;}
-
-/* AUTH FORM ALIGNMENT */
-.box input#email,
-.box input#password,
-.box input#phone,
-.box input#oldPassword,
-.box input#newPassword{
-    display:block;
-    width:80%;
-    max-width:480px;
-    margin:8px auto;
-    text-align:right;
-}
-
-.box button{
-    display:block;
-    width:80%;
-    max-width:480px;
-    margin:8px auto;
-}
-
-#toggleAuthBtn{
-    margin-top:12px;
-}
-
-#loginStatus,
-#changeStatus{
-    text-align:center;
-}
-
-
-
-/* MESSENGER */
-.messengerBtn{
-    display:block;
-    width:80%;
-    max-width:480px;
-    margin:10px auto;
-}
-#messengerPage{
-    display:none;
-    margin-top:15px;
-}
-.messengerSearchBox{
-    display:none;
-    background:#0b0b0b;
-    border:1px solid #00ffff55;
-    border-radius:18px;
-    padding:14px;
-    margin-top:12px;
-}
-.messengerSearchBox input{
-    display:block;
-    width:90%;
-    max-width:460px;
-    margin:8px auto;
-}
-.messengerResults,.contactsList{
-    margin-top:12px;
-    text-align:right;
-}
-.userResult,.contactItem{
-    background:#151515;
-    border:1px solid #00ffff44;
-    border-radius:15px;
-    padding:12px;
-    margin:8px 0;
-}
-.userPhone{
-    font-size:12px;
-    opacity:.75;
-    direction:ltr;
-    text-align:left;
-}
-.smallSquareBtn{
-    width:52px !important;
-    height:52px;
-    padding:0 !important;
-    margin:14px auto 0 !important;
-    border-radius:14px !important;
-    font-size:22px;
-}
-.addUserBtn{
-    width:100% !important;
-    max-width:none !important;
-}
-.messengerHint{
-    color:#aaa;
-    font-size:13px;
-}
-
-.messengerBadge{display:inline-flex;min-width:24px;height:24px;padding:0 7px;margin-right:8px;border-radius:12px;background:#ff245e;color:#fff;align-items:center;justify-content:center;font-size:12px;font-weight:bold;vertical-align:middle}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}body:before,body:after{animation:none!important}.box{transition:none!important}.box:hover,.box button:hover,.box button:active{transform:none!important}}
 </style>
 
 </head>
 
 <body>
 
-<h1>ARTIN_NNG</h1>
-<p>🎮 Gaming • Minecraft • Resource Pack</p>
+<header class="site-header">
+  <div class="brand-mark" aria-hidden="true">🎮</div>
+  <h1><span>ARTIN_NNG</span></h1>
+  <p class="site-subtitle">دنیای بازی، ماینکرفت و ریسورس‌پک‌ها</p>
+  <div class="status-pill">گیمینگ، دانلود و ارتباط با جامعه</div>
+</header>
 
+<main class="site-content">
 <div class="box">
 
 <h2>🌐 شبکه‌های اجتماعی</h2>
@@ -223,7 +166,7 @@ cursor:pointer;
 
 <!-- ورود / ثبت نام -->
 
-<div class="box">
+<div class="box auth-box">
 
 <h2>🔐 ورود / ثبت‌نام</h2>
 
@@ -291,6 +234,8 @@ cursor:pointer;
 <button id="sendBtn" onclick="sendMessage()" disabled>ارسال</button>
 
 </div>
+</main>
+<footer class="site-footer">ARTIN_NNG · دنیای گیمینگ تو</footer>
 
 <script>
 
@@ -619,32 +564,16 @@ async function loadMessages(){
 
     let chat = document.getElementById("chat");
 
-    chat.innerHTML="";
-
-    data.forEach(m=>{
-
-        chat.innerHTML += `
+    // یک بار ساخت HTML، به‌جای بازسازی DOM برای تک‌تک پیام‌ها
+    chat.innerHTML = data.map(m => `
         <div class="msg">
-
-        <div class="name"
-        style="${m.is_admin ? "color:#ff0000;font-weight:bold;" : ""}">
-
-        ${m.is_admin ? "🛡️👑 " : ""}
-        ${m.username}
-        ${m.is_admin ? " 🔥 ADMIN" : ""}
-
+          <div class="name" style="${m.is_admin ? "color:#ff0000;font-weight:bold;" : ""}">
+            ${m.is_admin ? "🛡️👑 " : ""}${escapeHtml(m.username)}${m.is_admin ? " 🔥 ADMIN" : ""}
+          </div>
+          <div>${escapeHtml(m.message)}</div>
+          <div class="time">${new Date(m.created_at).toLocaleString("fa")}</div>
         </div>
-
-        ${m.message}
-
-        <div class="time">
-        ${new Date(m.created_at).toLocaleString("fa")}
-        </div>
-
-        </div>
-        `;
-
-    });
+    `).join("");
 
     chat.scrollTop = chat.scrollHeight;
 
@@ -865,10 +794,16 @@ async function start(){
 
 start();
 
-setInterval(loadMessages,3000);
-setInterval(loadUnreadPrivateCount,4000);
+setInterval(() => {
+    if (!document.hidden && currentUser && currentAccessToken) loadMessages();
+}, 6000);
+setInterval(() => {
+    if (!document.hidden && currentUser && currentAccessToken) loadUnreadPrivateCount();
+}, 9000);
 loadUnreadPrivateCount();
-setInterval(checkBanStatus,5000);
+setInterval(() => {
+    if (!document.hidden && currentUser && currentAccessToken) checkBanStatus();
+}, 12000);
 
 </script>
 
